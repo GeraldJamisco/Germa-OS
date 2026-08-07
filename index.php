@@ -412,14 +412,9 @@ try {
         exit;
     }
 
-    // Every other sidebar destination is a known route with no screen yet.
+    // Every nav destination is built, so an unmatched path is a genuine 404.
     http_response_code(404);
-
-    View::render('screens/not-built-yet', ['section' => $path, 'token' => $token], [
-        'title'     => ucwords(str_replace('-', ' ', $path)),
-        'route'     => $path,
-        'show_dock' => false,
-    ]);
+    require __DIR__ . '/resources/views/not-found.php';
     exit;
 } catch (Throwable $e) {
     germa_fail($e, $path);
@@ -496,14 +491,19 @@ function germa_login(string $method): never
  */
 function germa_onboarding(string $method): never
 {
-    // Already done: nothing to collect.
+    // Already done: show the confirmation once (reached via ?done after the
+    // final step), otherwise there is nothing left to collect.
     if (OnboardingService::isComplete()) {
+        if (isset($_GET['done'])) {
+            germa_onboarding_done();
+        }
         header('Location: ' . Html::url(''));
         exit;
     }
 
     $service = new OnboardingService();
     $error   = null;
+    $done    = false;
     $step    = $service->step($_GET['step'] ?? 1);
 
     if ($method === 'POST') {
@@ -518,8 +518,8 @@ function germa_onboarding(string $method): never
                 $next = $service->save($step, $body);
 
                 if ($next === null) {
-                    // Setup finished: into the OS proper.
-                    header('Location: ' . Html::url(''), true, 303);
+                    // Setup finished: show the confirmation screen, then in.
+                    header('Location: ' . Html::url('welcome') . '?done=1', true, 303);
                     exit;
                 }
 
@@ -537,6 +537,24 @@ function germa_onboarding(string $method): never
     $last     = OnboardingService::LAST_STEP;
     $values   = $service->current();
     $projects = $service->projects();
+    $token    = Csrf::token();
+    $operator = $values['operator_name'];
+    $base     = \Germa\Support\Money::base();
+
+    require __DIR__ . '/resources/views/welcome.php';
+    exit;
+}
+
+/** The "you're set up" confirmation, shown once after the final step. */
+function germa_onboarding_done(): never
+{
+    $done     = true;
+    $step     = OnboardingService::LAST_STEP;
+    $steps    = OnboardingService::STEPS;
+    $last     = OnboardingService::LAST_STEP;
+    $values   = (new OnboardingService())->current();
+    $projects = [];
+    $error    = null;
     $token    = Csrf::token();
     $operator = $values['operator_name'];
     $base     = \Germa\Support\Money::base();
