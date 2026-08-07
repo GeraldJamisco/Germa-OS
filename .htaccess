@@ -1,0 +1,34 @@
+# Germa OS front controller and web-exposure hardening.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase "/Germa OS/"
+
+    # Forbid any path segment that starts with a dot: .git, .claude, .env,
+    # .gitignore and the like. Without this the "serve real files" rule below
+    # would hand them straight to the browser.
+    RewriteRule "(^|/)\." - [F]
+
+    # Real files (public/assets/...) are served directly.
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Everything else goes through the front controller.
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Deny source, config, data and metadata by extension. Evaluated in the
+# authorization phase, so it holds even where mod_rewrite would serve the file.
+# The /api/* endpoints are routed through index.php and have no file extension,
+# so JSON responses are unaffected by the json rule here.
+<FilesMatch "\.(sql|md|MD|dc\.html|log|json|lock|dist|example|bak|ini|sh)$">
+    Require all denied
+</FilesMatch>
+
+# Belt and braces for the files an attacker reaches for by name.
+<FilesMatch "^(composer\.(json|lock)|package(-lock)?\.json|\.env.*|\.gitignore|\.htaccess)$">
+    Require all denied
+</FilesMatch>
+
+Options -Indexes

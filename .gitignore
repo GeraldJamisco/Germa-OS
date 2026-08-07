@@ -1,0 +1,16 @@
+# Secrets never commit
+config/config.local.php
+config/config.local.php.bak
+*.bak
+
+# Runtime
+storage/logs/*.log
+storage/cache/*
+storage/auth-throttle.json
+!storage/.gitkeep
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

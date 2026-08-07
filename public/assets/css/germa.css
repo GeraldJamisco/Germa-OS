@@ -1,0 +1,2721 @@
+/* ==========================================================================
+   GERMA OS design system
+   Ported from the Germa OS Dashboard v2 mockup. The mockup carried every rule
+   inline; this file is the same visual language expressed as tokens and
+   components so the rest of the app can reuse it.
+   ========================================================================== */
+
+/* --- Tokens --------------------------------------------------------------- */
+:root {
+  /* Surfaces */
+  --canvas: #f7f7f5;
+  --surface: #fbfaf9;
+  --surface-sunk: #f7f7f5;
+  --sage: #f1f2ea;
+  --sage-hover: #e8eadf;
+  --border: #e7e6e5;
+  --border-strong: #dcddd2;
+  --border-control: #cfcbc7;
+  --track: #efeeec;
+
+  /* Ink */
+  --ink: #1c1917;
+  --ink-body: #57534e;
+  --ink-muted: #79716b;
+  --ink-faint: #a8a29e;
+  --ink-invert: #fbfaf9;
+  --ink-dim: #d6d3d1;
+  /* Text on a saturated accent (coral, green, dark). */
+  --on-accent: #ffffff;
+
+  /* Coral the single accent. Used for the AI voice and for urgency. */
+  --coral-200: #f0b2ac;
+  --coral-300: #fbb4ac;
+  --coral-400: #ee6a5b;
+  --coral-500: #e4544b;
+  --coral-600: #d9463c;
+  --coral-700: #c9443a;
+  --coral-800: #9e2f27;
+  --coral-tint: #fbe3e1;
+  --coral-chip: #f7c9c4;
+  --coral-wash: #fdeeec;
+  --coral-grad: linear-gradient(170deg, var(--coral-400), var(--coral-600));
+  --coral-grad-hover: linear-gradient(
+    170deg,
+    var(--coral-500),
+    var(--coral-700)
+  );
+
+  /* Status */
+  --signal-good: #3f9c6d;
+  --signal-good-light: #6fc493;
+  --signal-good-wash: #e9f5ee;
+  --signal-warn: #e0a21a;
+  --signal-warn-light: #f0b429;
+  --signal-warn-wash: #fdf6e9;
+  --signal-warn-chip: #f6e3b8;
+  --signal-warn-ink: #8a6410;
+  --signal-bad: var(--coral-500);
+  --signal-up: var(--coral-300);
+
+  /* Neutral data fills */
+  --fill-neutral: #dedfd4;
+  --fill-quiet: #c7c3bf;
+  --dot-idle: #dad7d4;
+
+  /* Dark card */
+  --dark: #1c1917;
+  --dark-hover: #332e2b;
+  --dark-inset: rgba(251, 250, 249, 0.06);
+  --dark-inset-hover: rgba(251, 250, 249, 0.12);
+
+  /* Type */
+  --font-sans: Inter, ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-display: "DM Sans", Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-mono:
+    "Fragment Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+
+  /* Shape */
+  --r-card: 24px;
+  --r-inner: 18px;
+  --r-tile: 16px;
+  --r-pill: 999px;
+
+  /* Elevation */
+  --shadow-btn:
+    0 1px 2px rgba(28, 25, 23, 0.12), 0 6px 16px rgba(228, 84, 75, 0.24);
+  --shadow-dock:
+    0 1px 2px rgba(28, 25, 23, 0.05), 0 10px 24px rgba(28, 25, 23, 0.06);
+  --shadow-pop:
+    0 2px 4px rgba(28, 25, 23, 0.06), 0 16px 32px rgba(28, 25, 23, 0.12);
+
+  --sidebar-w: 258px;
+}
+
+/* --- Reset ---------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--canvas);
+  color: var(--ink-body);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--coral-700);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--coral-500);
+}
+::selection {
+  background: var(--coral-tint);
+}
+
+:where(button, a, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--coral-500);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--r-pill);
+}
+
+/* --- Typography ----------------------------------------------------------- */
+.t-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.t-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  color: var(--ink);
+  margin: 0;
+}
+.t-figure {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--ink);
+}
+.t-figure--xl {
+  font-size: 46px;
+}
+.t-figure--lg {
+  font-size: 32px;
+}
+.t-figure--md {
+  font-size: 22px;
+}
+.t-figure--sm {
+  font-size: 19px;
+}
+.t-label {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+.t-note {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  line-height: 1.45;
+}
+.t-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* --- Chips: the provenance system ---------------------------------------- */
+/* The UI brief is explicit that entered facts, derived figures and AI output
+   must never look identical. One chip component, five visual states. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: var(--r-pill);
+  padding: 4px 9px;
+  white-space: nowrap;
+}
+.chip--entered {
+  color: var(--ink-muted);
+  background: var(--sage);
+}
+.chip--calculated {
+  color: var(--ink-muted);
+  background: var(--sage);
+}
+.chip--calculated::before {
+  content: "ƒ";
+  font-size: 10px;
+  opacity: 0.8;
+}
+.chip--estimated {
+  color: var(--signal-warn-ink);
+  background: var(--signal-warn-chip);
+}
+.chip--estimated::before {
+  content: "≈";
+}
+.chip--ai {
+  color: var(--coral-700);
+  background: var(--coral-tint);
+}
+.chip--ai::before {
+  content: "◆";
+  font-size: 8px;
+}
+.chip--unavailable {
+  color: var(--ink-faint);
+  background: var(--track);
+}
+
+.chip--status {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 5px 11px;
+}
+.chip--critical {
+  color: var(--on-accent);
+  background: var(--coral-500);
+}
+.chip--tight {
+  color: var(--signal-warn-ink);
+  background: var(--signal-warn-chip);
+}
+.chip--stable {
+  color: var(--on-accent);
+  background: var(--signal-good);
+}
+
+/* --- Buttons -------------------------------------------------------------- */
+.btn {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: var(--r-pill);
+  padding: 11px 18px;
+  color: var(--ink);
+  background: var(--sage);
+  transition: background 0.12s ease;
+}
+.btn:hover {
+  background: var(--sage-hover);
+}
+.btn[disabled] {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+.btn--primary {
+  color: var(--on-accent);
+  background: var(--coral-grad);
+  box-shadow: var(--shadow-btn);
+}
+.btn--primary:hover {
+  background: var(--coral-grad-hover);
+}
+
+.btn--quiet {
+  background: var(--surface-sunk);
+  border: 1px solid var(--border);
+  font-size: 12.5px;
+  padding: 11px 14px;
+}
+.btn--quiet:hover {
+  background: var(--sage);
+  border-color: var(--border-strong);
+}
+
+.btn--dark {
+  background: var(--dark);
+  color: var(--ink-invert);
+  border-radius: 20px;
+  padding: 16px 18px;
+  font-size: 14px;
+  justify-content: space-between;
+  width: 100%;
+}
+.btn--dark:hover {
+  background: var(--dark-hover);
+}
+
+.btn--sm {
+  font-size: 12.5px;
+  padding: 10px 16px;
+}
+.btn--link {
+  all: unset;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--coral-700);
+}
+.btn--link:hover {
+  color: var(--coral-500);
+}
+
+/* --- Layout --------------------------------------------------------------- */
+.shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+.sidebar__brand {
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sidebar__mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(160deg, var(--coral-400), var(--coral-600));
+  color: var(--on-accent);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 2px 6px rgba(228, 84, 75, 0.32);
+  flex: none;
+}
+.sidebar__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.sidebar__nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.navgroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.navgroup__label {
+  padding: 4px 12px 6px;
+}
+.navlink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--r-pill);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink-body);
+}
+.navlink:hover {
+  background: var(--sage);
+  color: var(--ink);
+}
+.navlink[aria-current="page"] {
+  background: var(--coral-tint);
+  color: var(--coral-700);
+}
+.navlink__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--dot-idle);
+  flex: none;
+}
+.navlink[aria-current="page"] .navlink__dot {
+  background: var(--coral-500);
+}
+.navlink__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.navlink__badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--coral-700);
+}
+
+.sidebar__user {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+}
+.userchip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--r-tile);
+  background: var(--sage);
+}
+.userchip__signout {
+  margin-left: auto;
+  flex: none;
+}
+.userchip__signout-btn {
+  width: 32px;
+  height: 32px;
+  color: var(--ink-muted);
+}
+.userchip__signout-btn:hover {
+  color: var(--coral-700);
+}
+.userchip__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-pill);
+  background: var(--coral-tint);
+  color: var(--coral-700);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex: none;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 6;
+}
+.search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--surface-sunk);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 9px 16px;
+  flex: 1 1 240px;
+  min-width: 0;
+  color: var(--ink-faint);
+  font-size: 13px;
+}
+.search__text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.search__kbd {
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.topbar__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+  white-space: nowrap;
+  background: var(--sage);
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-body);
+}
+.status-pill__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--signal-good);
+  box-shadow: 0 0 0 3px rgba(63, 156, 109, 0.16);
+}
+.status-pill--degraded .status-pill__dot {
+  background: var(--signal-warn);
+  box-shadow: 0 0 0 3px rgba(224, 162, 26, 0.16);
+}
+
+.iconbtn {
+  all: unset;
+  cursor: pointer;
+  position: relative;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: var(--surface-sunk);
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  color: var(--ink-body);
+}
+.iconbtn__dot {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--coral-500);
+}
+.iconbtn__glyph {
+  width: 18px;
+  height: 18px;
+}
+
+/* --- Notifications -------------------------------------------------------- */
+/* The bell opens the alerts it counts. A badge with no way to see what it is
+   counting is not information, it is just something to worry about. */
+.notif {
+  position: relative;
+  flex: none;
+}
+.notif__panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 20;
+  width: min(360px, calc(100vw - 32px));
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-pop);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.notif__panel[hidden] {
+  display: none;
+}
+.notif__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.notif__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: min(52vh, 420px);
+  overflow-y: auto;
+}
+.notif__item {
+  --tone-surface: var(--surface-sunk);
+  --tone-dot: var(--ink-faint);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 12px;
+  border-radius: var(--r-inner);
+  background: var(--tone-surface);
+  color: inherit;
+}
+a.notif__item:hover {
+  background: var(--sage);
+  color: inherit;
+}
+.notif__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--tone-dot);
+  margin-top: 5px;
+  flex: none;
+}
+.notif__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.notif__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.notif__cue {
+  flex: none;
+  color: var(--coral-700);
+}
+.notif__foot {
+  align-self: stretch;
+  text-align: center;
+}
+
+.page {
+  padding: 24px 28px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* --- Cards ---------------------------------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.card--dark {
+  background: var(--dark);
+  border-color: var(--dark);
+  color: var(--ink-dim);
+}
+.card--dark .t-card-title {
+  color: var(--ink-invert);
+}
+.card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.card__foot {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.row--wide {
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+}
+
+/* --- Hero ----------------------------------------------------------------- */
+.hero {
+  background: var(--sage);
+  border-radius: var(--r-card);
+  padding: 26px 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 28px;
+  align-items: start;
+}
+.hero__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.hero__sep {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: var(--fill-quiet);
+}
+.hero__title {
+  font-size: 34px;
+}
+.hero__brief {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px 18px;
+  max-width: 64ch;
+}
+.hero__brief p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink-body);
+  text-wrap: pretty;
+}
+.hero__brief strong {
+  color: var(--ink);
+}
+
+/* --- Meters --------------------------------------------------------------- */
+.bar {
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--track);
+  overflow: hidden;
+}
+.bar--thick {
+  height: 8px;
+}
+.bar__fill {
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: var(--ink);
+  transition: width 0.3s ease;
+}
+.bar__fill--coral {
+  background: var(--coral-grad);
+}
+.bar__fill--quiet {
+  background: var(--ink-muted);
+}
+
+.meter {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.meter__head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+}
+.meter__value {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.stat {
+  background: var(--surface-sunk);
+  border-radius: var(--r-tile);
+  padding: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.stat__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 10px;
+}
+
+/* --- Priorities ----------------------------------------------------------- */
+.priority {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 13px;
+  border-radius: var(--r-inner);
+  background: var(--surface-sunk);
+  transition: background 0.15s ease;
+}
+.priority[data-done="1"] {
+  background: var(--sage);
+}
+.priority__box {
+  all: unset;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border-control);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--on-accent);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+.priority[data-done="1"] .priority__box {
+  background: var(--coral-500);
+  border-color: var(--coral-500);
+}
+.priority__title {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.priority[data-done="1"] .priority__title {
+  text-decoration: line-through;
+  color: var(--ink-muted);
+}
+.tag {
+  font-size: 11px;
+  color: var(--ink-muted);
+  background: var(--sage);
+  border-radius: var(--r-pill);
+  padding: 3px 9px;
+}
+.tag-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* --- Boardroom ------------------------------------------------------------ */
+.board__quote {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 19px;
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+  color: var(--ink-invert);
+  text-wrap: pretty;
+}
+.board__signals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(78px, 1fr));
+  gap: 8px;
+  margin-top: auto;
+}
+.signal {
+  background: var(--dark-inset);
+  border-radius: 14px;
+  padding: 11px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.signal__role {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+/* In the boardroom each advisor is clickable, you can put a question straight
+   to the one who objected. It keeps every .signal look and only sheds the
+   browser's button chrome, so the two screens cannot drift apart. */
+button.signal {
+  border: 0;
+  width: 100%;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+}
+button.signal:hover {
+  background: var(--dark-inset-hover);
+}
+.signal__glyph {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+}
+/* A brief stat that is itself the problem: cash at zero, runway gone. */
+.signal__glyph--alert {
+  color: var(--coral-300);
+}
+.signal__note {
+  font-size: 10px;
+  color: var(--ink-faint);
+  line-height: 1.3;
+}
+.chip--on-dark {
+  color: var(--coral-300);
+  background: rgba(228, 84, 75, 0.18);
+}
+
+/* --- Pipeline ------------------------------------------------------------- */
+.funnel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
+  gap: 10px;
+}
+.funnel__cell {
+  background: var(--surface-sunk);
+  border-radius: var(--r-inner);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.funnel__cell--won {
+  background: var(--coral-tint);
+}
+.funnel__plot {
+  height: 56px;
+  display: flex;
+  align-items: flex-end;
+}
+.funnel__bar {
+  width: 100%;
+  border-radius: 8px;
+  background: var(--fill-neutral);
+}
+.funnel__cell--won .funnel__bar {
+  background: var(--coral-500);
+}
+.funnel__delta {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+.funnel__delta--up {
+  color: var(--signal-good);
+}
+.funnel__cell--won .funnel__delta--up {
+  color: var(--coral-700);
+}
+.funnel__foot {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+/* --- Alerts --------------------------------------------------------------- */
+.alert {
+  --tone-surface: var(--surface-sunk);
+  --tone-dot: var(--ink-faint);
+  --tone-chip-bg: var(--border);
+  --tone-chip-ink: var(--ink-body);
+  border-radius: var(--r-inner);
+  padding: 13px 15px;
+  background: var(--tone-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.alert__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.alert__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--tone-dot);
+}
+.alert__title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.alert__body {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-body);
+}
+.alert__sev {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  border-radius: var(--r-pill);
+  padding: 3px 8px;
+  color: var(--tone-chip-ink);
+  background: var(--tone-chip-bg);
+}
+.alert__dismiss {
+  all: unset;
+  cursor: pointer;
+  margin-left: auto;
+  color: var(--ink-faint);
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+}
+.alert__dismiss:hover {
+  color: var(--ink-body);
+}
+
+/* --- Projects ------------------------------------------------------------- */
+.project {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  background: var(--surface-sunk);
+  border-radius: var(--r-inner);
+  padding: 13px 15px;
+}
+.project__name {
+  flex: 1 1 150px;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.project__title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.project__meter {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1 1 120px;
+  min-width: 120px;
+}
+.project__meter .bar {
+  flex: 1;
+  min-width: 40px;
+}
+/* Holds the percentage steady so the bars above and below line up. */
+.project__pct {
+  width: 32px;
+  flex: none;
+}
+/* The reason column: what to do about this project, sitting right-aligned
+   against the verdict so the two read as one statement. */
+.project__note {
+  flex: 1 1 170px;
+  min-width: 170px;
+  text-align: right;
+}
+.project__revenue {
+  flex: none;
+  min-width: 76px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+.project__revenue--none {
+  color: var(--ink-faint);
+}
+.prio {
+  flex: none;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border-radius: var(--r-pill);
+  padding: 4px 9px;
+  text-align: center;
+  color: var(--ink-muted);
+  background: var(--sage);
+}
+.prio--high {
+  color: var(--coral-800);
+  background: var(--coral-tint);
+}
+/* The same small pill carries deal stages and client status. Coral means the
+   thing needs attention; green means it has already paid. */
+.prio--good {
+  color: var(--signal-good);
+  background: var(--signal-good-wash);
+}
+.prio--warn {
+  color: var(--signal-warn-ink);
+  background: var(--signal-warn-chip);
+}
+.prio--quiet {
+  color: var(--ink-faint);
+  background: var(--track);
+}
+
+/* --- Goals ---------------------------------------------------------------- */
+.goal {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.goal__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+.goal__horizon {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.goal__pct {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.goal__title {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+/* --- Opportunities -------------------------------------------------------- */
+.opps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+/* A sunk panel inside a card: the shape used whenever one card holds several
+   self-contained items, each with its own heading and actions. `.opp` is this
+   plus the opportunity ranking; Decisions uses it bare. One declaration, so the
+   two screens cannot drift apart. */
+.panel,
+.opp {
+  background: var(--surface-sunk);
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.opp__head {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+.opp__rank {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--coral-700);
+}
+.opp__title {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+}
+.opp__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.opp__fact {
+  display: flex;
+  flex-direction: column;
+}
+.opp__fact-k {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+.opp__fact-v {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.verdict {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  border-radius: var(--r-pill);
+  padding: 3px 8px;
+}
+.verdict--do {
+  color: var(--on-accent);
+  background: var(--signal-good);
+}
+.verdict--consider {
+  color: var(--signal-warn-ink);
+  background: var(--signal-warn-chip);
+}
+.verdict--ignore {
+  color: var(--ink-muted);
+  background: var(--track);
+}
+
+/* --- Quick actions -------------------------------------------------------- */
+.quickgrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+/* --- Command dock --------------------------------------------------------- */
+.dock {
+  position: sticky;
+  bottom: 0;
+  padding: 14px 28px 18px;
+  background: linear-gradient(
+    180deg,
+    rgba(247, 247, 245, 0),
+    var(--canvas) 42%
+  );
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 5;
+}
+.dock__suggestions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.dock__suggestion {
+  all: unset;
+  cursor: pointer;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 7px 13px;
+  font-size: 12px;
+  color: var(--ink-body);
+  white-space: nowrap;
+}
+.dock__suggestion:hover {
+  border-color: var(--coral-200);
+  color: var(--coral-700);
+}
+.dock__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 6px 6px 6px 20px;
+  box-shadow: var(--shadow-dock);
+}
+.dock__input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  color: var(--ink);
+  padding: 10px 0;
+}
+.dock__answer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px 18px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+.dock__answer p {
+  margin: 0 0 0.7em;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-body);
+}
+.dock__answer p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Banners and empty states -------------------------------------------- */
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  border-radius: var(--r-inner);
+  padding: 11px 16px;
+  font-size: 12.5px;
+  background: var(--signal-warn-wash);
+  color: var(--signal-warn-ink);
+  border: 1px solid var(--signal-warn-chip);
+}
+.empty {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--r-inner);
+  padding: 20px;
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.is-busy {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Toasts confirm a write landed without stealing the screen. */
+.toasts {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 40;
+}
+.toast {
+  background: var(--dark);
+  color: var(--ink-invert);
+  border-radius: var(--r-tile);
+  padding: 12px 16px;
+  font-size: 13px;
+  max-width: 340px;
+  box-shadow: 0 10px 30px rgba(28, 25, 23, 0.22);
+  animation: toast-in 0.18s ease;
+}
+.toast--error {
+  background: var(--coral-700);
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* --- Modal (quick add) ---------------------------------------------------- */
+.modal {
+  border: none;
+  padding: 0;
+  border-radius: var(--r-card);
+  background: var(--surface);
+  max-width: 460px;
+  width: calc(100vw - 32px);
+  color: var(--ink-body);
+}
+.modal::backdrop {
+  background: rgba(28, 25, 23, 0.38);
+}
+.modal__inner {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.modal__title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.field__input,
+.field__select {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--surface-sunk);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 13px;
+  width: 100%;
+}
+.field__hint {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+}
+.modal__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* ==========================================================================
+   Components below are shared across screens. Anything a new screen needs
+   goes here as a named component: never as inline styles on that screen.
+   ========================================================================== */
+
+/* --- Page header ---------------------------------------------------------- */
+/* Eyebrow + title on the left, one control on the right. Every screen except
+   the dashboard (which leads with the hero) opens with this. */
+.pagehead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.pagehead__title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pagehead__h1 {
+  font-size: 28px;
+}
+.pagehead .t-eyebrow {
+  color: var(--ink-muted);
+}
+
+/* --- Segmented control ---------------------------------------------------- */
+/* Mutually exclusive views of the same data (week / month / year). Not for
+   navigation: use the sidebar for that. */
+.segmented {
+  display: flex;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 4px;
+}
+.segmented__option {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: var(--r-pill);
+  color: var(--ink-body);
+  text-align: center;
+}
+.segmented__option:hover {
+  background: var(--sage);
+  color: var(--ink);
+}
+.segmented__option[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--ink-invert);
+}
+
+/* --- Insight band --------------------------------------------------------- */
+/* A full-width AI or rules statement about the screen you are on. The sage
+   background separates commentary from the data it describes. */
+.insight {
+  background: var(--sage);
+  border-radius: var(--r-card);
+  padding: 18px 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.insight__text {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-body);
+  text-wrap: pretty;
+}
+.insight__text strong {
+  color: var(--ink);
+}
+
+/* --- Metric card ---------------------------------------------------------- */
+/* One headline figure with its provenance and a comparison line. The summary
+   row on any screen that opens with "here are the four numbers". */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.metric__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.metric__label {
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
+.metric__value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.metric__delta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  margin-top: auto;
+}
+.metric__delta--good {
+  color: var(--signal-good);
+}
+.metric__delta--bad {
+  color: var(--coral-700);
+}
+
+/* --- Column chart --------------------------------------------------------- */
+/* Grouped bars over a categorical axis. Values are labelled on hover via the
+   title attribute, the chart shows shape, the numbers live in the cards. */
+.chart {
+  display: grid;
+  gap: 12px;
+  align-items: end;
+  height: 150px;
+}
+.chart__col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  justify-content: flex-end;
+  min-width: 0;
+}
+.chart__pair {
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+  height: 110px;
+  width: 100%;
+  justify-content: center;
+}
+.chart__bar {
+  width: 40%;
+  max-width: 16px;
+  border-radius: 6px 6px 2px 2px;
+  background: var(--fill-neutral);
+  min-height: 2px;
+}
+.chart__bar--in {
+  background: var(--ink);
+}
+.chart__bar--out {
+  background: var(--coral-500);
+}
+.chart__label {
+  font-size: 10.5px;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+.chart__col--now .chart__label {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Single-series variant: one wider bar per column instead of a pair. */
+.chart--single .chart__bar {
+  width: 60%;
+  max-width: 34px;
+  border-radius: 8px 8px 3px 3px;
+  background: var(--ink);
+}
+/* The month in progress is not comparable to a finished one, so it is marked
+   rather than left to read as a collapse in performance. */
+.chart--single .chart__col--now .chart__bar {
+  background: var(--coral-500);
+}
+
+/* Ruled figure strip under a chart or list: the numbers behind the shape. */
+.cardstats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+.cardstats__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.cardstats__label {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+}
+.cardstats__value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.cardstats__value--bad {
+  color: var(--coral-700);
+}
+.cardstats__value--good {
+  color: var(--signal-good);
+}
+
+/* --- Stat cards ----------------------------------------------------------- */
+/* A grid of tinted cards each carrying one figure plus the bar that gives it
+   scale. Project Portfolio uses the horizontal `.bar` inside it to show a
+   share; Active Projects uses the vertical well to compare counts. Same card,
+   two readings, which is why they are one component rather than two. */
+.statgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+.statgrid--tight {
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+}
+.statcard {
+  background: var(--surface-sunk);
+  border-radius: var(--r-inner);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+/* The card that earns money is the one that should catch the eye first. */
+.statcard--lead {
+  background: var(--coral-tint);
+}
+.statcard__well {
+  height: 56px;
+  display: flex;
+  align-items: flex-end;
+}
+.statcard__col {
+  width: 100%;
+  border-radius: 8px;
+  background: var(--fill-quiet);
+  min-height: 4px;
+}
+.statcard__col--lead {
+  background: var(--coral-500);
+}
+.statcard__delta {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+.statcard__delta--lead {
+  color: var(--coral-700);
+}
+.statcard__delta--warn {
+  color: var(--signal-warn);
+}
+
+/* Summary row led by one emphasised card (usually the dark one) followed by
+   supporting figures. */
+.metrics--lead {
+  grid-template-columns: minmax(280px, 1.4fr) repeat(auto-fit, minmax(180px, 1fr));
+}
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink-body);
+}
+.legend__swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  flex: none;
+  background: var(--fill-neutral);
+}
+.legend__swatch--in {
+  background: var(--ink);
+}
+.legend__swatch--out {
+  background: var(--coral-500);
+}
+
+/* --- Breakdown list ------------------------------------------------------- */
+/* Name, amount, share-of-total bar, optional classification tag. Works for
+   income sources, expense categories, or anything else that splits a total. */
+.breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.breakdown__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--r-tile);
+  background: var(--surface-sunk);
+}
+.breakdown__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.breakdown__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.breakdown__name,
+.breakdown__amount {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.breakdown__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.breakdown__amount {
+  flex: none;
+}
+.breakdown__total {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 12px 0;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
+.breakdown__total strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+/* A qualifying line under a breakdown row: what this source actually is. */
+.breakdown__status {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+}
+/* Ranked rows sit taller and rounder than plain ones. */
+.breakdown--ranked .breakdown__row {
+  padding: 13px;
+  border-radius: var(--r-inner);
+}
+
+/* Classification tag: is this cost fixed, variable, or a discretionary flag? */
+.tag--class {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+.tag--fixed {
+  color: var(--ink-body);
+  background: var(--sage);
+}
+.tag--variable {
+  color: var(--signal-warn-ink);
+  background: var(--signal-warn-chip);
+}
+.tag--flag {
+  color: var(--coral-800);
+  background: var(--coral-tint);
+}
+
+/* --- Transaction list ----------------------------------------------------- */
+.txns {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.txn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 4px;
+  border-bottom: 1px solid var(--track);
+}
+.txn:last-child {
+  border-bottom: 0;
+}
+/* The leading square on any list row: a direction arrow, a rank, an initial.
+   Shared by .txn and .breakdown so both list styles stay in step. */
+.tile {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  background: var(--sage);
+  color: var(--ink-body);
+}
+.tile--in {
+  background: var(--signal-good-wash);
+  color: var(--signal-good);
+}
+.tile--debt {
+  background: var(--coral-tint);
+  color: var(--coral-700);
+}
+.tile--rank {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+.tile--lead {
+  background: var(--coral-tint);
+  color: var(--coral-700);
+}
+.txn__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.txn__name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.txn__meta {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+}
+.txn__amount {
+  flex: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.txn__amount--in {
+  color: var(--signal-good);
+}
+
+/* --- Due row -------------------------------------------------------------- */
+/* A single-line obligation: dot, what it is, when it falls, how much. Tinted by
+   the shared tone properties, so urgency reads the same here as in an alert. */
+.duerow {
+  --tone-surface: var(--surface-sunk);
+  --tone-dot: var(--ink-faint);
+  --tone-chip-bg: var(--border);
+  --tone-chip-ink: var(--ink-body);
+  border-radius: var(--r-inner);
+  padding: 13px 15px;
+  background: var(--tone-surface);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.duerow__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--tone-dot);
+  flex: none;
+}
+.duerow__title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  flex: 1 1 160px;
+  min-width: 0;
+}
+.duerow__when {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--r-pill);
+  padding: 3px 8px;
+  white-space: nowrap;
+  flex: none;
+  color: var(--tone-chip-ink);
+  background: var(--tone-chip-bg);
+}
+.duerow__amount {
+  flex: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Severity tinting, shared by anything that carries urgency: the surface, the
+   status dot and the chip all read from one set of custom properties, so an
+   alert and an overdue bill are tinted by the same rule rather than two. */
+.alert--critical,
+.duerow--critical,
+.agenda__row--critical,
+.notif__item--critical {
+  --tone-surface: var(--coral-wash);
+  --tone-dot: var(--coral-500);
+  --tone-chip-bg: var(--coral-chip);
+  --tone-chip-ink: var(--coral-800);
+}
+.alert--high,
+.duerow--high,
+.agenda__row--high,
+.notif__item--high {
+  --tone-surface: var(--signal-warn-wash);
+  --tone-dot: var(--signal-warn);
+  --tone-chip-bg: var(--signal-warn-chip);
+  --tone-chip-ink: var(--signal-warn-ink);
+}
+
+/* --- Do-not callout ------------------------------------------------------- */
+/* The spec ends every Daily Command Brief with one thing NOT to do. It gets
+   its own weight rather than being a sentence inside the paragraph. */
+.donot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  border-radius: var(--r-tile);
+  background: rgba(228, 84, 75, 0.12);
+  border: 1px solid rgba(228, 84, 75, 0.25);
+}
+.donot__label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--coral-300);
+  flex: none;
+}
+.donot__text {
+  font-size: 13.5px;
+  color: var(--ink-invert);
+  flex: 1;
+  min-width: 0;
+}
+
+/* --- Action rows ---------------------------------------------------------- */
+/* A directive with a cost attached: dot, what to do, how long. Used by the
+   Sales and Build action lists. */
+.actions {
+  display: flex;
+  flex-direction: column;
+}
+.actionrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 4px;
+  border-bottom: 1px solid var(--track);
+}
+.actionrow:last-child {
+  border-bottom: 0;
+}
+.actionrow__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--coral-500);
+  flex: none;
+}
+.actionrow--quiet .actionrow__dot {
+  background: var(--ink-faint);
+}
+.actionrow__text {
+  flex: 1;
+  min-width: 0;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.actionrow--quiet .actionrow__text {
+  color: var(--ink-muted);
+}
+.actionrow__meta {
+  flex: none;
+  font-size: 11.5px;
+  color: var(--ink-muted);
+}
+
+/* An action row that is itself the control. Used by the boardroom's standing
+   questions: the whole row is the button, so the question is the target rather
+   than a small "ask" link beside it. */
+.actionrow--button {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 8px;
+  border-radius: var(--r-inner);
+  border-bottom: 1px solid var(--track);
+  text-align: left;
+  font-family: var(--font-sans);
+}
+.actionrow--button:hover {
+  background: var(--surface-sunk);
+}
+.actionrow--button:last-of-type {
+  border-bottom: 0;
+}
+
+/* --- Minutes -------------------------------------------------------------- */
+/* The record of what was actually asked and what came back. Every entry carries
+   who answered and how long they took: a rules answer is instant and a model
+   answer that took nine seconds should admit it. */
+.minutes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.minute {
+  background: var(--surface-sunk);
+  border-radius: var(--r-inner);
+  padding: 13px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.minute__q {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.minute__a {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  text-wrap: pretty;
+}
+
+/* --- Multi-line field ----------------------------------------------------- */
+.field__textarea {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--surface-sunk);
+  border: 1px solid var(--border-control);
+  border-radius: var(--r-inner);
+  padding: 11px 13px;
+  min-height: 86px;
+  resize: vertical;
+  width: 100%;
+}
+.field__textarea:focus-visible {
+  outline: 2px solid var(--coral-500);
+  outline-offset: 1px;
+}
+/* The system prompt is shown verbatim, so it reads as the document it is rather
+   than as prose: mono, tighter, and never editable. */
+.prompt__text {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: var(--ink-body);
+  resize: vertical;
+}
+.prompt__text[readonly] {
+  background: var(--surface-sunk);
+  border-style: dashed;
+  cursor: text;
+}
+
+/* --- Standalone pages ----------------------------------------------------- */
+/* Login, first-run setup and the 404. These render outside the app shell,
+   because half the chrome depends on data a logged-out or un-set-up visitor
+   does not have yet. They share this small vocabulary rather than each carrying
+   their own inline styles. */
+.authpage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: var(--canvas);
+  padding: 40px 24px;
+}
+.authpage__card {
+  width: 100%;
+  max-width: 460px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  padding: 34px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* The coral G lockup, reused from the sidebar so the brand is one thing. */
+.brandmark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--coral-grad);
+  color: var(--on-accent);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 2px 6px rgba(228, 84, 75, 0.32);
+  flex: none;
+}
+.brandmark--lg {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  font-size: 20px;
+}
+.brandlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.brandlock__id {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
+}
+.brandlock__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+/* A green dot and a label, no pill. "System operational". */
+.statusline {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+.statusline__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--signal-good);
+  box-shadow: 0 0 0 3px rgba(63, 156, 109, 0.16);
+  flex: none;
+}
+.authcaption {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* --- Error / not-found page ----------------------------------------------- */
+.errpage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--canvas);
+  color: var(--ink-body);
+}
+.errpage__bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.errpage__body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 28px;
+}
+.errpage__inner {
+  max-width: 560px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+.errpage__code {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 46px;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.errpage__chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.errpage__foot {
+  padding: 14px 28px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* --- Week / month strip --------------------------------------------------- */
+.strip {
+  display: grid;
+  gap: 10px;
+}
+.strip__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 6px;
+  border-radius: var(--r-tile);
+  background: var(--surface-sunk);
+  min-width: 0;
+}
+.strip__day--today {
+  background: var(--dark);
+}
+.strip__day--past {
+  opacity: 0.55;
+}
+.strip__dow {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.strip__day--today .strip__dow {
+  color: var(--ink-faint);
+}
+.strip__num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+}
+.strip__day--today .strip__num {
+  color: var(--ink-invert);
+}
+.strip__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: transparent;
+}
+.strip__dot--calm {
+  background: var(--fill-quiet);
+}
+.strip__dot--high {
+  background: var(--signal-warn);
+}
+.strip__dot--critical {
+  background: var(--coral-500);
+}
+
+/* --- Date tile ------------------------------------------------------------ */
+/* The two-line month/day square that leads an agenda row. */
+.datetile {
+  width: 44px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  border-radius: 10px;
+  padding: 6px 4px;
+  background: var(--tone-chip-bg, var(--sage));
+  color: var(--tone-chip-ink, var(--ink-body));
+}
+.datetile__mon {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.datetile__day {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* An agenda row is a .txn led by a date tile instead of an icon tile. */
+.agenda {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.agenda__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  border-radius: var(--r-inner);
+  background: var(--tone-surface, var(--surface-sunk));
+}
+.agenda__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.agenda__title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.agenda__meta {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+}
+.agenda__tag {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  border-radius: var(--r-pill);
+  padding: 4px 9px;
+  white-space: nowrap;
+  color: var(--tone-chip-ink, var(--ink-body));
+  background: var(--tone-chip-bg, var(--border));
+}
+.agenda__amount {
+  flex: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* --- Review form ---------------------------------------------------------- */
+.reviewgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+/* --- Definition rows ------------------------------------------------------ */
+/* Label on the left, value on the right. Used wherever a card lists a few
+   supporting facts under its headline figure. */
+.deflist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.deflist--ruled {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.defrow {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+}
+.defrow__key {
+  color: var(--ink-muted);
+}
+.defrow__value {
+  font-weight: 600;
+  color: var(--ink);
+  text-align: right;
+}
+
+/* --- Dark-card variants --------------------------------------------------- */
+.card--dark .bar {
+  background: rgba(251, 250, 249, 0.1);
+}
+.card--dark .t-note,
+.card--dark .metric__label {
+  color: var(--ink-faint);
+}
+.card--dark .card__body {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-faint);
+}
+.t-figure--hero {
+  font-size: 44px;
+}
+.card--dark .t-figure {
+  color: var(--ink-invert);
+}
+
+/* --- Small shared utilities ---------------------------------------------- */
+.t-body {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-body);
+  margin: 0;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.stack--tight {
+  gap: 7px;
+}
+.stack--loose {
+  gap: 18px;
+}
+.inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.spread {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+.push-right {
+  margin-left: auto;
+}
+.push-bottom {
+  margin-top: auto;
+}
+.self-start {
+  align-self: flex-start;
+}
+.flex-none {
+  flex: none;
+}
+
+.sidebar__wordmark {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+.sidebar__wordmark .t-eyebrow {
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+}
+.userchip__id {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  min-width: 0;
+}
+.userchip__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.userchip__role {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+.dock__answer-body {
+  min-width: 0;
+  flex: 1;
+}
+
+/* --- Responsive ----------------------------------------------------------- */
+/* Tablet: the sidebar becomes an off-canvas drawer. */
+@media (max-width: 1080px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(300px, 86vw);
+    z-index: 30;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: 0 0 40px rgba(28, 25, 23, 0.18);
+  }
+  .sidebar[data-open="1"] {
+    transform: none;
+  }
+
+  .scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(28, 25, 23, 0.38);
+    z-index: 20;
+  }
+  .menu-toggle {
+    display: grid !important;
+  }
+}
+
+@media (min-width: 1081px) {
+  .menu-toggle,
+  .scrim {
+    display: none !important;
+  }
+}
+
+/* Phone: single column, and the card order follows the brief's mobile
+   priority. `display: contents` promotes the cards out of their row wrappers
+   so they can be ordered individually. */
+@media (max-width: 720px) {
+  .topbar {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+  .search {
+    display: none;
+  }
+  .page {
+    padding: 16px 16px 90px;
+    gap: 16px;
+  }
+  .dock {
+    padding: 12px 16px 16px;
+  }
+  .hero {
+    padding: 20px;
+    gap: 18px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hero__title {
+    font-size: 27px;
+  }
+  .card {
+    padding: 18px;
+    border-radius: 20px;
+  }
+  .t-figure--xl {
+    font-size: 36px;
+  }
+  .t-figure--lg {
+    font-size: 27px;
+  }
+
+  .page > .row {
+    display: contents;
+  }
+
+  .o-1 {
+    order: 1;
+  } /* Financial health */
+  .o-2 {
+    order: 2;
+  } /* Today's income target */
+  .o-3 {
+    order: 3;
+  } /* Top 3 priorities */
+  .o-4 {
+    order: 4;
+  } /* Boardroom brief */
+  .o-5 {
+    order: 5;
+  } /* Needs attention */
+  .o-6 {
+    order: 6;
+  } /* Revenue pipeline */
+  .o-7 {
+    order: 7;
+  } /* Goals */
+  .o-8 {
+    order: 8;
+  } /* Projects */
+  .o-9 {
+    order: 9;
+  } /* Opportunities */
+  .o-10 {
+    order: 10;
+  } /* Debt */
+  .o-11 {
+    order: 11;
+  } /* Quick actions */
+
+  .quickgrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .opp__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .funnel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .toasts {
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+  }
+  .toast {
+    max-width: none;
+  }
+
+  /* Shared components introduced with the Financial Overview. */
+  .pagehead {
+    align-items: flex-start;
+  }
+  .pagehead__h1 {
+    font-size: 24px;
+  }
+  .segmented {
+    width: 100%;
+  }
+  .segmented__option {
+    flex: 1;
+  }
+  .metric__value {
+    font-size: 24px;
+  }
+  .t-figure--hero {
+    font-size: 34px;
+  }
+  /* The chart keeps all its columns: halving them would misrepresent the
+     trend, but the bars and gaps tighten to fit. */
+  .chart {
+    height: 130px;
+    gap: 6px;
+  }
+  .chart__pair {
+    height: 92px;
+    gap: 2px;
+  }
+  .chart__label {
+    font-size: 9.5px;
+  }
+  .breakdown__row {
+    padding: 10px;
+  }
+  .tile {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  .sidebar,
+  .dock,
+  .topbar__actions,
+  .toasts {
+    display: none !important;
+  }
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .card {
+    break-inside: avoid;
+  }
+}
