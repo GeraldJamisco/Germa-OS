@@ -147,6 +147,11 @@ $pct  = $done ? 100 : (int) round(($step / $last) * 100);
             <input class="field__input" type="text" name="name" placeholder="Client Websites"
               <?= $projects === [] ? 'autofocus' : '' ?>>
           </label>
+          <label class="field">
+            <span class="field__label">What is it? (the board reads this to advise on it)</span>
+            <textarea class="field__textarea" name="purpose" rows="2"
+              placeholder="One or two sentences: what the project is and what it is meant to achieve."></textarea>
+          </label>
           <div class="row" style="grid-template-columns:1fr 1fr;gap:10px">
             <label class="field">
               <span class="field__label">Status</span>

@@ -105,6 +105,9 @@ use Germa\Support\Html;
           <div class="project__name">
             <span class="project__title"><?= e($project['name']) ?></span>
             <span class="t-note"><?= e($project['classification']) ?> · <?= e($project['hours_label']) ?></span>
+            <?php if (!$project['has_description']): ?>
+              <span class="t-note" style="color:var(--coral-700)">No description, the verdict is on numbers alone</span>
+            <?php endif; ?>
           </div>
 
           <span class="project__revenue<?= $project['earns'] ? '' : ' project__revenue--none' ?>">

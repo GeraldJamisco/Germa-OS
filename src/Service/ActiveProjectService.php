@@ -226,6 +226,8 @@ final class ActiveProjectService
                 : Hours::format($project['hours_window']) . ' ' . Period::phrase($period),
             'revenue'    => $project['earns_revenue'] ? $project['revenue']->compact() : 'None',
             'earns'      => $project['earns_revenue'],
+            'description' => $project['description'] ?? null,
+            'has_description' => (bool) ($project['has_description'] ?? false),
         ];
     }
 

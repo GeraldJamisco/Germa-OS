@@ -1057,6 +1057,15 @@ button.signal:hover {
   flex: 1;
   min-width: 40px;
 }
+/* A project's description under its name, clamped so a long one does not stretch
+   the row. Its presence is what lets the board judge the project. */
+.project__desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+}
 /* Holds the percentage steady so the bars above and below line up. */
 .project__pct {
   width: 32px;

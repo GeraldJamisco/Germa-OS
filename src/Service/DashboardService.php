@@ -213,6 +213,20 @@ final class DashboardService
             'daily_prospect_target' => Settings::int('daily_prospect_target', 20),
         ];
 
+        // The description travels with the metrics, because a continue/pause/
+        // pivot/kill judgement needs to know what the project is, not only how it
+        // is doing. It is trimmed rather than sent whole: a couple of sentences
+        // is enough to reason from, and it keeps every board call from carrying
+        // an essay per project. A project with none is sent as null on purpose,
+        // so the board can say it cannot judge what it has not been told.
+        $describe = static function (mixed $text): ?string {
+            $text = trim((string) ($text ?? ''));
+            if ($text === '') {
+                return null;
+            }
+            return mb_strlen($text) <= 500 ? $text : mb_substr($text, 0, 499) . '…';
+        };
+
         $projects = array_map(static fn(array $p): array => [
             'name'          => $p['name'],
             'status'        => $p['status_label'],
@@ -222,6 +236,10 @@ final class DashboardService
             'earns_revenue' => $p['earns_revenue'],
             'hours_14d'     => $p['hours_14d'],
             'next_milestone' => $p['milestone_label'],
+            // What it is, what it solves, who it is for.
+            'description'   => $describe($p['description'] ?? null),
+            'problem'       => $describe($p['problem'] ?? null),
+            'customer'      => $p['customer'] ?? null,
         ], $this->projects->portfolio());
 
         $priorities = array_map(static fn(array $t): array => [

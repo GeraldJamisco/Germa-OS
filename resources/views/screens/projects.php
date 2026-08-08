@@ -83,6 +83,13 @@ use Germa\Support\Html;
           <div class="project__name">
             <span class="project__title"><?= e($project['name']) ?></span>
             <span class="t-note"><?= e($project['sub']) ?></span>
+            <?php if ($project['has_description']): ?>
+              <span class="t-note project__desc"><?= e((string) $project['description']) ?></span>
+            <?php else: ?>
+              <button class="btn--link self-start" type="button" data-quick-add="describe-project">
+                No description yet, the board cannot judge it
+              </button>
+            <?php endif; ?>
           </div>
 
           <span class="prio prio--<?= e($project['status_tone']) ?>"><?= e($project['status']) ?></span>
@@ -108,6 +115,7 @@ use Germa\Support\Html;
 
   <div class="inline card__foot">
     <button class="btn btn--primary" type="button" data-quick-add="project">+ Add project</button>
+    <button class="btn btn--quiet" type="button" data-quick-add="describe-project">Describe a project</button>
     <button class="btn btn--quiet" type="button" data-quick-add="project-hours">Log hours</button>
   </div>
 </section>

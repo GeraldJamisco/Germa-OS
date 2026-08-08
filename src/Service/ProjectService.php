@@ -125,7 +125,13 @@ final class ProjectService
                 'review_due'        => $reviewDays !== null && $reviewDays <= 0,
                 'risk_note'         => $row['risk_note'] ?? null,
                 'strategic_value'   => $row['strategic_value'] ?? null,
+                // What the project actually is. Without this the board can rank a
+                // project by its hours and revenue but cannot judge whether it is
+                // worth doing at all, which is the decision it exists to inform.
+                'description'       => $row['purpose'] ?? null,
+                'problem'           => $row['problem'] ?? null,
                 'customer'          => $row['customer'] ?? null,
+                'has_description'   => trim((string) ($row['purpose'] ?? '')) !== '',
             ];
         }
 

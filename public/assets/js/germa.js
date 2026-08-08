@@ -795,7 +795,7 @@
     },
     project: {
       title: "Add a project",
-      hint: "Gets a keep-or-kill review date two weeks out.",
+      hint: "The description is what lets the board judge whether it is worth doing, not just how it is going. Gets a keep-or-kill review date two weeks out.",
       submit: "Add project",
       fields: [
         {
@@ -804,6 +804,13 @@
           type: "text",
           required: true,
           autofocus: true,
+        },
+        {
+          name: "purpose",
+          label: "What is it? (the board reads this to advise on it)",
+          type: "textarea",
+          placeholder:
+            "One or two sentences: what the project is and what it is meant to achieve.",
         },
         {
           name: "status",
@@ -829,6 +836,29 @@
         },
         { name: "customer", label: "Who is it for?", type: "text" },
         { name: "problem", label: "What problem does it solve?", type: "text" },
+      ],
+    },
+    "describe-project": {
+      title: "Describe a project",
+      hint: "The board can rank a project by its hours and revenue without this, but it cannot say whether the project is worth doing until it knows what the project is.",
+      submit: "Save description",
+      fields: [
+        {
+          name: "project_id",
+          label: "Which project?",
+          type: "project",
+          required: true,
+          autofocus: true,
+        },
+        {
+          name: "purpose",
+          label: "What is it?",
+          type: "textarea",
+          placeholder:
+            "What the project is and what it is meant to achieve.",
+        },
+        { name: "problem", label: "What problem does it solve?", type: "text" },
+        { name: "customer", label: "Who is it for?", type: "text" },
       ],
     },
     "project-hours": {

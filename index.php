@@ -586,6 +586,26 @@ function germa_api(string $method, string $route): never
         Json::error('Your session expired. Reload the page and try again.', 403);
     }
 
+    // Every writer validates its own input and throws InvalidArgumentException
+    // with a message written for the person to read ("A project needs a name.").
+    // That is a client error, not a server one, so it is caught here and returned
+    // as the message with a 422. Without this, a validation failure would fall to
+    // the top-level handler and read as "Something broke on the server", which is
+    // both wrong and unhelpful.
+    try {
+        germa_api_dispatch($method, $route, $body);
+    } catch (\InvalidArgumentException $e) {
+        Json::error($e->getMessage(), 422);
+    }
+
+    Json::error('No such endpoint: ' . $route, 404);
+}
+
+/**
+ * @param array<string,mixed> $body
+ */
+function germa_api_dispatch(string $method, string $route, array $body): void
+{
     $dashboard = new DashboardService();
 
     // GET /api/dashboard the whole payload, for a client-side refresh.
@@ -622,6 +642,7 @@ function germa_api(string $method, string $route): never
             'task'         => $entries->addTask($body),
             'prospect'     => $entries->addProspect($body),
             'project'      => $entries->addProject($body),
+            'describe-project' => $entries->describeProject($body),
             'project-hours' => $entries->addProjectHours($body),
             'project-decision' => $entries->recordProjectDecision($body),
             'decision'        => $entries->addDecision($body),

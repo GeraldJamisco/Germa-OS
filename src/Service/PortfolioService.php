@@ -214,6 +214,7 @@ final class PortfolioService
         return [
             'id'             => $project['id'],
             'name'           => $project['name'],
+            'has_description' => (bool) ($project['has_description'] ?? false),
             'classification' => $project['status_label'],
             'hours_total'    => $project['hours_total'],
             'hours_label'    => $project['hours_total'] === 0.0

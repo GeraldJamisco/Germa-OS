@@ -238,6 +238,54 @@ final class EntryService
      * @param array<string,mixed> $input
      */
     /**
+     * The description of a project: what it is, what it solves, who it is for.
+     * This is the field the board reads to judge whether a project is worth doing
+     * at all, as opposed to how it is performing. Kept separate from creation so a
+     * project added months ago can be described now, which is exactly when the
+     * gap tends to be noticed.
+     *
+     * @param array<string,mixed> $input
+     */
+    public function describeProject(array $input): array
+    {
+        $projectId = $this->id($input, 'project_id');
+
+        if ($projectId === null) {
+            throw new InvalidArgumentException('Choose the project to describe.');
+        }
+
+        $project = Database::first('SELECT name FROM projects WHERE id = :id', ['id' => $projectId]);
+
+        if ($project === null) {
+            throw new InvalidArgumentException('That project no longer exists.');
+        }
+
+        $purpose = $this->text($input, 'purpose', 2000);
+
+        if ($purpose === null) {
+            throw new InvalidArgumentException('A description needs at least a sentence on what the project is.');
+        }
+
+        // Only the fields that were provided are touched, so describing the
+        // purpose does not wipe a problem or customer entered earlier.
+        $fields = ['purpose' => $purpose];
+
+        if (($problem = $this->text($input, 'problem', 2000)) !== null) {
+            $fields['problem'] = $problem;
+        }
+        if (($customer = $this->text($input, 'customer', 160)) !== null) {
+            $fields['customer'] = $customer;
+        }
+
+        Database::update('projects', $fields, ['id' => $projectId]);
+
+        return [
+            'id'      => $projectId,
+            'message' => sprintf('%s described. The board can now judge whether it is worth doing.', (string) $project['name']),
+        ];
+    }
+
+    /**
      * Hours against a project. Without this the whole Projects group is a
      * read-only story: allocation, at-risk and the Critic's "you are coding to
      * avoid selling" objection are all measured from these rows.
